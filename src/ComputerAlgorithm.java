@@ -1,13 +1,13 @@
 import java.util.Random;
 
 public class ComputerAlgorithm {
-    public static int wylosujWiersz() {
-        Random losowanie = new Random();
-        return losowanie.nextInt(10);
+
+    public static Random random = new Random();
+    public static int drawVerticalCoordinate() {
+        return random.nextInt(10);
     }
 
-    public static int wylosujKolumne() {
-        Random losowanie = new Random();
-        return losowanie.nextInt(10);
+    public static int drawHorizontalCoordinate() {
+        return random.nextInt(10);
     }
 }

@@ -1,118 +1,118 @@
 public class Players {
-    private static int[][] planszaGracza1 = new int[10][10];
-    private static int[][] planszaGracza2 = new int[10][10];
-    private static final int GRACZ1 = 0;
-    private static final int GRACZ2 = 1;
-    private static int aktualnyGracz = GRACZ1;
-    private static String graczPierwszy = "Agnieszka";
-    private static String graczDrugi = "Gracz Drugi";
+    private static int[][] playersOneGrid = new int[10][10];
+    private static int[][] playersTwoGrid = new int[10][10];
+    private static final int PLAYER1 = 0;
+    private static final int PLAYER2 = 1;
+    private static int currentPlayer = PLAYER1;
+    private static String playerOne = "Agnieszka";
+    private static String playerTwo = "Gracz Drugi";
 
-    private static int[][] dajPlanszeAktualnegoGracza() {
-        return aktualnyGracz == GRACZ1 ? planszaGracza1 : planszaGracza2;
+    private static int[][] getCurrentPlayersBoard() {
+        return currentPlayer == PLAYER1 ? playersOneGrid : playersTwoGrid;
     }
 
-    private static int[][] dajPlanszePrzeciwnika() {
-        return aktualnyGracz == GRACZ1 ? planszaGracza2 : planszaGracza1;
+    private static int[][] getOpponentsBoard() {
+        return currentPlayer == PLAYER1 ? playersTwoGrid : playersOneGrid;
     }
 
-    static int dajWielkoscAktualnejPlanszy() {
-        int[][] aktualnaPlansza = dajPlanszeAktualnegoGracza();
-        return aktualnaPlansza.length;
+    static int getCurrentBoardsSize() {
+        int[][] currentBoard = getCurrentPlayersBoard();
+        return currentBoard.length;
     }
 
-    static String dajNazweAktualnegoGracza() {
-        return aktualnyGracz == GRACZ1 ? graczPierwszy : graczDrugi;
+    static String getCurrentsPlayerName() {
+        return currentPlayer == PLAYER1 ? playerOne : playerTwo;
     }
 
-    static int dajAktualnegoGracza() {
-        return aktualnyGracz == GRACZ1 ? GRACZ1 : GRACZ2;
+    static int getCurrentPlayer() {
+        return currentPlayer == PLAYER1 ? PLAYER1 : PLAYER2;
     }
 
-    static void wyswietlJesliCzlowiek(String doWyswietlenia) {
-        if (aktualnyGracz == GRACZ1) {
-            System.out.println(doWyswietlenia);
+    static void printIfCurrentPlayerIsHuman(String toPrint) {
+        if (currentPlayer == PLAYER1) {
+            System.out.println(toPrint);
         }
     }
 
-    static void wyswietlJesliKomputer(String doWyswietlenia) {
-        if (aktualnyGracz == GRACZ2) {
-            System.out.println(doWyswietlenia);
+    static void printIfCurrentPlayerIsComputer(String toPrint) {
+        if (currentPlayer == PLAYER2) {
+            System.out.println(toPrint);
         }
     }
 
-    static int ustalKolumneJesliCzlowiek() {
-        return AlgorytmCzlowieka.ustalKolumne();
+    static int establishVerticalCoordinateIfHuman() {
+        return HumanAlgorithm.establishVerticalCoordinate();
     }
 
-    static int ustalWierszJesliCzlowiek() {
-        return AlgorytmCzlowieka.ustalWiersz();
+    static int establishHorizontalCoordinateIfHuman() {
+        return HumanAlgorithm.establishHorizontalCoordinate();
     }
 
-    static int ustalKolumneJesliKomputer() {
-        return AlgorytmKomputera.wylosujKolumne();
+    static int establishVerticalCoordinateIfComputer() {
+        return ComputerAlgorithm.drawVerticalCoordinate();
     }
 
-    static int ustalWierszJesliKomputer() {
-        return AlgorytmKomputera.wylosujWiersz();
+    static int establishHorizontalCoordinateIfComputer() {
+        return ComputerAlgorithm.drawHorizontalCoordinate();
     }
 
-    static void zmienGracza() {
-        aktualnyGracz = aktualnyGracz == GRACZ1 ? GRACZ2 : GRACZ1;
+    static void changePlayer() {
+        currentPlayer = currentPlayer == PLAYER1 ? PLAYER2 : PLAYER1;
     }
 
-    static int dajWartoscZpolaAktualnegoGracza(int wiersz, int kolumna) {
-        int[][] aktualnaPlansza = dajPlanszeAktualnegoGracza();
-        return aktualnaPlansza[wiersz][kolumna];
+    static int getValueFromCurrentPlayersSquare(int horizontalCoordinate, int verticalCoordinate) {
+        int[][] currentBoard = getCurrentPlayersBoard();
+        return currentBoard[horizontalCoordinate][verticalCoordinate];
     }
 
-    static int dajWartoscZpolaPrzeciwnika(int wiersz, int kolumna) {
-        int[][] planszaPrzeciwnika = dajPlanszePrzeciwnika();
-        return planszaPrzeciwnika[wiersz][kolumna];
+    static int getValueFromOpponentsSquare(int horizontalCoordinate, int verticalCoordinate) {
+        int[][] opponentsBoard = getOpponentsBoard();
+        return opponentsBoard[horizontalCoordinate][verticalCoordinate];
     }
 
-    static void wpiszStatekWpole(int wiersz, int kolumna) {
-        int[][] aktualnaPlansza = dajPlanszeAktualnegoGracza();
-        aktualnaPlansza[wiersz][kolumna] = Statki.STATEK;
+    static void addShipToCurrentBoard(int horizontalCoordinate, int verticalCoordinate) {
+        int[][] currentBoard = getCurrentPlayersBoard();
+        currentBoard[horizontalCoordinate][verticalCoordinate] = Game.STATEK;
     }
 
-    static void wpiszSymbolWpolePrzeciwnika(int wiersz, int kolumna, int symbol) {
-        int[][] planszaPrzeciwnika = dajPlanszePrzeciwnika();
-        planszaPrzeciwnika[wiersz][kolumna] = symbol;
+    static void addSymbolToOpponentsBoard(int horizontalCoordinate, int verticalCoordinate, int symbol) {
+        int[][] opponentsBoard = getOpponentsBoard();
+        opponentsBoard[horizontalCoordinate][verticalCoordinate] = symbol;
     }
 
-    static boolean sprawdzCzyZostalyStatkiDoTrafienia() {
-        boolean nietrafionyStatek = false;
-        int[][] planszaPrzeciwnika = Gracze.dajPlanszePrzeciwnika();
-        for (int wiersz = 0; wiersz < planszaPrzeciwnika.length; wiersz++) {
-            for (int kolumna = 0; kolumna < planszaPrzeciwnika[wiersz].length; kolumna++) {
-                if (planszaPrzeciwnika[wiersz][kolumna] == Statki.STATEK){
-                    nietrafionyStatek = true;
-                    return nietrafionyStatek;
+    static boolean checkIfShipsLeftToShoot() {
+        boolean unshotShip = false;
+        int[][] opponentsBoard = getOpponentsBoard();
+        for (int row = 0; row < opponentsBoard.length; row++) {
+            for (int column = 0; column < opponentsBoard[row].length; column++) {
+                if (opponentsBoard[row][column] == Game.STATEK){
+                    unshotShip = true;
+                    return unshotShip;
                 }
             }
         }
-        return nietrafionyStatek;
+        return unshotShip;
     }
 
-    public static boolean czyTuraCzlowieka() {
-        return aktualnyGracz == GRACZ1;
+    public static boolean isHumansMove() {
+        return currentPlayer == PLAYER1;
     }
-    public static boolean czyTuraKomputera() {
-        return aktualnyGracz == GRACZ2;
+    public static boolean isComputersMove() {
+        return currentPlayer == PLAYER2;
     }
 
-    public static void uzupelnijPlanszeCzlowiekaDoTestow() {
-        planszaGracza1 = new int[][]{
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.STATEK,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.STATEK,Statki.STATEK,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.STATEK,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.STATEK,Statki.STATEK,Statki.STATEK,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE},
-                {Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE,Statki.PUSTE}
+    public static void fillInHumansBoardForTesting() {
+        playersOneGrid = new int[][]{
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.STATEK,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.STATEK,Game.STATEK,Game.STATEK,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
+                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE}
         };
     }
 }
