@@ -1,168 +1,176 @@
 import java.util.Scanner;
 
 public class Game {
-    static char[] zbiorAlfabetyczny = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
-    static int wielkoscStatku;
-    public static final int PUSTE = 0;
-    public static final int STATEK = 1;
-    public static final int TRAFIONY = 2;
-    public static final int PUDLO = 3;
-    public static final int ROBOCZY_STATEK = 4;
-    public static final char PUSTE_SYMBOL = ' ';
-    public static final char STATEK_SYMBOL = '\u25A1';
-    public static final char TRAFIONY_SYMBOL = 'X';
-    public static final char PUDLO_SYMBOL = '*';
-    public static final char ROBOCZY_STATEK_SYMBOL = '\u2713';
+    static char[] gridLetters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
+    static int shipSize;
+    public static final int EMPTY = 0;
+    public static final int SHIP = 1;
+    public static final int HIT = 2;
+    public static final int MISS = 3;
+    public static final int TRIAL_SHIP = 4;
+    public static final char EMPTY_SYMBOL = ' ';
+    public static final char SHIP_SYMBOL = '\u25A1';
+    public static final char HIT_SYMBOL = 'X';
+    public static final char MISS_SYMBOL = '*';
+    public static final char TRIAL_SHIP_SYMBOL = '\u2713';
 
     public static void main(String[] args) {
-        przygotujObiePlanszeDoGry();
+        prepareBothBoardsForGame();
         System.out.println("Zaczynamy gre!");
         do {
             System.out.println();
-            System.out.println(Gracze.dajNazweAktualnegoGracza() + " twój ruch.");
-            wydrukujPlanszePrzeciwnika();
-            int[] ruchGracza = pobierzRuchGracza();
-            int wierszStatku = ruchGracza[0];
-            int kolumnaStatku = ruchGracza[1];
-            if (sprawdzCzyTrafionyMaszt(ruchGracza)) {
-                Gracze.wpiszSymbolWpolePrzeciwnika(wierszStatku, kolumnaStatku, TRAFIONY);
-                if (czyCalyStatekTrafiony(wierszStatku, kolumnaStatku, 'X')) {
+            System.out.println(Players.getCurrentPlayersName() + " twój ruch.");
+            printOpponentsBoard();
+            int[] playersMove = getPlayersMove();
+            int horizontalCoordinate = playersMove[0];
+            int verticaLCoordinate = playersMove[1];
+            if (checkIfMastHit(playersMove)) {
+                Players.addSymbolToOpponentsBoard(horizontalCoordinate, verticaLCoordinate, HIT);
+                if (isEntireShipHit(horizontalCoordinate, verticaLCoordinate, 'X')) {
                     System.out.println("Trafiony - zatopiony!");
                 } else {
                     System.out.println("Trafiony!");
                 }
-                if (!Gracze.sprawdzCzyZostalyStatkiDoTrafienia()){
-                    Gracze.wyswietlJesliCzlowiek("Koniec gry! Wygrałeś. Gratulacje!");
-                    Gracze.wyswietlJesliKomputer("Koniec gry! Wygrał " + Gracze.dajNazweAktualnegoGracza());
+                if (!Players.checkIfShipsLeftToShoot()) {
+                    Players.printIfCurrentPlayerIsHuman("Koniec gry! Wygrałeś. Gratulacje!");
+                    Players.printIfCurrentPlayerIsComputer("Koniec gry! Wygrał " + Players.getCurrentPlayersName());
                     return;
                 }
-                wydrukujPlanszePrzeciwnika();
-                if (Gracze.czyTuraCzlowieka()) {
+                printOpponentsBoard();
+                if (Players.isHumansMove()) {
                     Scanner sc = new Scanner(System.in);
                     System.out.println("Wciśnij \"Enter\", żeby kontynuować grę.");
                     sc.nextLine();
                 }
             } else {
-                Gracze.wpiszSymbolWpolePrzeciwnika(wierszStatku, kolumnaStatku, PUDLO);
+                Players.addSymbolToOpponentsBoard(horizontalCoordinate, verticaLCoordinate, MISS);
                 System.out.println("Pudło!");
-                wydrukujPlanszePrzeciwnika();
-                if (Gracze.czyTuraCzlowieka()) {
+                printOpponentsBoard();
+                if (Players.isHumansMove()) {
                     Scanner sc = new Scanner(System.in);
                     System.out.println("Wciśnij \"Enter\", żeby kontynuować grę.");
                     sc.nextLine();
                 }
             }
-            Gracze.zmienGracza();
-        } while (Gracze.sprawdzCzyZostalyStatkiDoTrafienia());
+            Players.changePlayer();
+        } while (Players.checkIfShipsLeftToShoot());
     }
 
-    static void przygotujObiePlanszeDoGry() {
+    static void prepareBothBoardsForGame() {
         for (int i = 0; i < 2; i++) {
-            Gracze.wyswietlJesliCzlowiek(Gracze.dajNazweAktualnegoGracza() + ", witaj w grze w statki!\nOto twoja plansza:");
-            if (Gracze.czyTuraCzlowieka()) {
-                wydrukujPlansze();
+            Players.printIfCurrentPlayerIsHuman(Players.getCurrentPlayersName() + ", witaj w grze w statki!\nOto " +
+                    "twoja plansza:");
+            if (Players.isHumansMove()) {
+                printBoard();
             }
-            Gracze.wyswietlJesliCzlowiek("Narysuj swoje statki.\nDo dyspozycji masz:\n- 1 czteromasztowiec\n- 2 trzymasztowce " +
-                    "\n- 3 dwumasztowce\n- 4 jednomasztowce\nStatki możesz dowolnie ustawić, obrócić i wygiąć z zachowaniem zasady,\n" +
-                    "że każdy maszt jednego statku musi stykać się z jego kolejnym masztem ścianką boczną \n(nie może łączyć się na ukos)" +
+            Players.printIfCurrentPlayerIsHuman("Narysuj swoje statki.\nDo dyspozycji masz:\n- 1 czteromasztowiec\n- " +
+                    "2 trzymasztowce " +
+                    "\n- 3 dwumasztowce\n- 4 jednomasztowce\nStatki możesz dowolnie ustawić, obrócić i wygiąć z " +
+                    "zachowaniem zasady,\n" +
+                    "że każdy maszt jednego statku musi stykać się z jego kolejnym masztem ścianką boczną \n" +
+                    "(nie może łączyć się na ukos)" +
                     " oraz dwa statki nie mogę “dotykać” się żadnym bokiem masztu.\n" +
                     "Zaczynamy grę!");
-            /*if (Gracze.czyTuraKomputera()) {
+            /*if (Gracze.czyTuraKomputera()) { // fragment tylko do testow!
                 uzupelnijPlanszeStatkami();
             } else {
                 Gracze.uzupelnijPlanszeCzlowiekaDoTestow();
             }*/
-            uzupelnijPlanszeStatkami();
-            if (Gracze.czyTuraCzlowieka()) {
+            fillInBoardWithShips();
+            if (Players.isHumansMove()) {
                 Scanner sc = new Scanner(System.in);
                 System.out.println("Twoja plansza jest gotowa. Czas na drugiego gracza.");
                 System.out.println("Wciśnij \"Enter\", żeby kontynuować grę.");
                 sc.nextLine();
             }
-            Gracze.zmienGracza();
+            Players.changePlayer();
         }
     }
 
-    static void wydrukujPlansze() {
+    static void printBoard() {
         System.out.print("\t");
-        for (int i = 0; i < zbiorAlfabetyczny.length; i++) {
-            System.out.print(zbiorAlfabetyczny[i] + " | ");
+        for (char gridLetter : gridLetters) {
+            System.out.print(gridLetter + " | ");
         }
         System.out.println();
-        for (int wiersz = 1; wiersz < 11; wiersz++) {
-            if (wiersz <= 9) {
-                System.out.print("0" + wiersz + "| ");
+        for (int row = 1; row < 11; row++) {
+            if (row <= 9) {
+                System.out.print("0" + row + "| ");
             } else {
-                System.out.print(wiersz + "| ");
+                System.out.print(row + "| ");
             }
-            for (int kolumna = 1; kolumna < 11; kolumna++) {
-                int pole = Gracze.dajWartoscZpolaAktualnegoGracza(wiersz - 1, kolumna - 1);
-                char poleSymbol = switch (pole) {
-                    case PUSTE -> PUSTE_SYMBOL;
-                    case STATEK -> STATEK_SYMBOL;
-                    case TRAFIONY -> TRAFIONY_SYMBOL;
-                    case PUDLO -> PUDLO_SYMBOL;
+            for (int column = 1; column < 11; column++) {
+                int square = Players.getValueFromCurrentPlayersSquare(row - 1, column - 1);
+                char squareSymbol = switch (square) {
+                    case EMPTY -> EMPTY_SYMBOL;
+                    case SHIP -> SHIP_SYMBOL;
+                    case HIT -> HIT_SYMBOL;
+                    case MISS -> MISS_SYMBOL;
                     default -> 0;
                 };
-                System.out.print(poleSymbol + " | ");
+                System.out.print(squareSymbol + " | ");
             }
             System.out.println();
         }
     }
 
-    static void wydrukujPlansze(int[][] roboczyStatek) {
+    static void printBoard(int[][] trialShip) {
         System.out.print("\t");
-        for (int i = 0; i < zbiorAlfabetyczny.length; i++) {
-            System.out.print(zbiorAlfabetyczny[i] + " | ");
+        for (char gridLetter : gridLetters) {
+            System.out.print(gridLetter + " | ");
         }
         System.out.println();
-        for (int wiersz = 1; wiersz < 11; wiersz++) {
-            if (wiersz <= 9) {
-                System.out.print("0" + wiersz + "| ");
+        for (int row = 1; row < 11; row++) {
+            if (row <= 9) {
+                System.out.print("0" + row + "| ");
             } else {
-                System.out.print(wiersz + "| ");
+                System.out.print(row + "| ");
             }
-            for (int kolumna = 1; kolumna < 11; kolumna++) {
-                int pole = -2;
-                for (int maszt = 0; maszt < roboczyStatek.length; maszt++) {
-                    if (roboczyStatek[maszt][0] == wiersz - 1 && roboczyStatek[maszt][1] == kolumna - 1) {
-                        pole = ROBOCZY_STATEK;
-                    }
-                }
-                if (pole != ROBOCZY_STATEK) {
-                    pole = Gracze.dajWartoscZpolaAktualnegoGracza(wiersz - 1, kolumna - 1);
-                }
-                char poleSymbol = switch (pole) {
-                    case PUSTE -> PUSTE_SYMBOL;
-                    case STATEK -> STATEK_SYMBOL;
-                    case TRAFIONY -> TRAFIONY_SYMBOL;
-                    case PUDLO -> PUDLO_SYMBOL;
-                    case ROBOCZY_STATEK -> ROBOCZY_STATEK_SYMBOL;
-                    default -> 0;
-                };
-                System.out.print(poleSymbol + " | ");
+            for (int column = 1; column < 11; column++) {
+                char squareSymbol = getSquareSymbol(trialShip, row, column);
+                System.out.print(squareSymbol + " | ");
             }
             System.out.println();
         }
     }
 
-    static void uzupelnijPlanszeStatkami() {
-        wielkoscStatku = 4;
-        int iloscTakichSamychStatkow;
+    private static char getSquareSymbol(int[][] trialShip, int row, int column) {
+        int square = -2;
+        for (int mast = 0; mast < trialShip.length; mast++) {
+            if (trialShip[mast][0] == row - 1 && trialShip[mast][1] == column - 1) {
+                square = TRIAL_SHIP;
+            }
+        }
+        if (square != TRIAL_SHIP) {
+            square = Players.getValueFromCurrentPlayersSquare(row - 1, column - 1);
+        }
+        return switch (square) {
+            case EMPTY -> EMPTY_SYMBOL;
+            case SHIP -> SHIP_SYMBOL;
+            case HIT -> HIT_SYMBOL;
+            case MISS -> MISS_SYMBOL;
+            case TRIAL_SHIP -> TRIAL_SHIP_SYMBOL;
+            default -> 0;
+        };
+    }
+
+    static void fillInBoardWithShips() {
+        shipSize = 4;
+        int numberOfSameSizeShips;
         do {
-            iloscTakichSamychStatkow = ustalIloscTakichSamychStatkow();
-            for (int nrStatku = 0; nrStatku < iloscTakichSamychStatkow; nrStatku++) {
-                Gracze.wyswietlJesliCzlowiek("Narysuj statek. Ilosc masztów: " + wielkoscStatku);
-                int[][] wspolrzedneStatku = RysowanieStatku.narysujStatek();
-                wpiszStatekDoPlanszy(wspolrzedneStatku);
-                wydrukujPlansze();
+            numberOfSameSizeShips = establishNumberOfSameSizeShips();
+            for (int shipNumber = 0; shipNumber < numberOfSameSizeShips; shipNumber++) {
+                Players.printIfCurrentPlayerIsHuman("Narysuj statek. Ilosc masztów: " + shipSize);
+                int[][] shipCoordinates = ShipCreator.drawShip();
+                addShipToBoard(shipCoordinates);
+                printBoard();
             }
-            wielkoscStatku--;
-        } while (wielkoscStatku > 0);
+            shipSize--;
+        } while (shipSize > 0);
     }
 
-    static int ustalIloscTakichSamychStatkow() {
-        return switch (wielkoscStatku) {
+    static int establishNumberOfSameSizeShips() {
+        return switch (shipSize) {
             case 4 -> 1;
             case 3 -> 2;
             case 2 -> 3;
@@ -171,139 +179,139 @@ public class Game {
         };
     }
 
-    public static void wpiszStatekDoPlanszy(int[][] wspolrzedneStatku) {
-        for (int maszt = 0; maszt < wspolrzedneStatku.length; maszt++) {
-            int wierszMasztu = wspolrzedneStatku[maszt][0];
-            int kolumnaMasztu = wspolrzedneStatku[maszt][1];
-            Gracze.wpiszStatekWpole(wierszMasztu, kolumnaMasztu);
+    static void addShipToBoard(int[][] shipCoordinates) {
+        for (int mast = 0; mast < shipCoordinates.length; mast++) {
+            int mastHorizontalCoordinate = shipCoordinates[mast][0];
+            int mastVerticalCoordinate = shipCoordinates[mast][1];
+            Players.addMastToCurrentSquare(mastHorizontalCoordinate, mastVerticalCoordinate);
         }
     }
 
-    static int[] pobierzRuchGracza() {
-        int[] maszt = RysowanieStatku.dajWierszIkolumneMasztu();
-        int wierszStatku = maszt[0];
-        int kolumnaStatku = maszt[1];
-        if (Gracze.czyTuraCzlowieka()) {
-            if (!RysowanieStatku.czyWplanszy(wierszStatku, kolumnaStatku)) {
+    static int[] getPlayersMove() {
+        int[] mast = ShipCreator.getMastCoordinates();
+        int horizontalCoordinate = mast[0];
+        int verticalCoordinate = mast[1];
+        if (Players.isHumansMove()) {
+            if (!ShipCreator.checkIfWithinBoard(horizontalCoordinate, verticalCoordinate)) {
                 System.out.println("Podane pole jest poza planszą. Spróbuj jeszcze raz.");
-                return pobierzRuchGracza();
+                return getPlayersMove();
             }
         }
-        if (sprawdzCzyPowtorkaRuchu(maszt)) {
-            Gracze.wyswietlJesliCzlowiek("Podane pole już było strzelane. Spróbuj jeszcze raz.");
-            return pobierzRuchGracza();
+        if (checkIfRepeatedMove(mast)) {
+            Players.printIfCurrentPlayerIsHuman("Podane pole już było strzelane. Spróbuj jeszcze raz.");
+            return getPlayersMove();
         }
-        return maszt;
+        return mast;
     }
 
-    static boolean sprawdzCzyPowtorkaRuchu(int[] pobranyRuch) {
-        int wierszStatku = pobranyRuch[0];
-        int kolumnaStatku = pobranyRuch[1];
-        return (Gracze.dajWartoscZpolaPrzeciwnika(wierszStatku, kolumnaStatku) == TRAFIONY) || (Gracze.dajWartoscZpolaPrzeciwnika(wierszStatku, kolumnaStatku) == PUDLO);
+    static boolean checkIfRepeatedMove(int[] playersMove) {
+        int horizontalCoordinate = playersMove[0];
+        int verticalCoordinate = playersMove[1];
+        return (Players.getValueFromOpponentsSquare(horizontalCoordinate, verticalCoordinate) == HIT) ||
+                (Players.getValueFromOpponentsSquare(horizontalCoordinate, verticalCoordinate) == MISS);
     }
 
-    static boolean sprawdzCzyTrafionyMaszt(int[] pobranyRuch) {
-        int wierszStatku = pobranyRuch[0];
-        int kolumnaStatku = pobranyRuch[1];
-        return Gracze.dajWartoscZpolaPrzeciwnika(wierszStatku, kolumnaStatku) == STATEK;
+    static boolean checkIfMastHit(int[] playersMove) {
+        int horizontalCoordinate = playersMove[0];
+        int verticalCoordinate = playersMove[1];
+        return Players.getValueFromOpponentsSquare(horizontalCoordinate, verticalCoordinate) == SHIP;
     }
 
-    static void wydrukujPlanszePrzeciwnika() {
+    static void printOpponentsBoard() {
         System.out.print("\t");
-        for (int i = 0; i < zbiorAlfabetyczny.length; i++) {
-            System.out.print(zbiorAlfabetyczny[i] + " | ");
+        for (int i = 0; i < gridLetters.length; i++) {
+            System.out.print(gridLetters[i] + " | ");
         }
         System.out.println();
-        for (int wiersz = 1; wiersz < 11; wiersz++) {
-            if (wiersz <= 9) {
-                System.out.print("0" + wiersz + "| ");
+        for (int row = 1; row < 11; row++) {
+            if (row <= 9) {
+                System.out.print("0" + row + "| ");
             } else {
-                System.out.print(wiersz + "| ");
+                System.out.print(row + "| ");
             }
-            for (int kolumna = 1; kolumna < 11; kolumna++) {
-                int pole = Gracze.dajWartoscZpolaPrzeciwnika(wiersz - 1, kolumna - 1);
-                char poleSymbol = switch (pole) {
-                    case PUSTE, STATEK -> PUSTE_SYMBOL;
-                    case TRAFIONY -> TRAFIONY_SYMBOL;
-                    case PUDLO -> PUDLO_SYMBOL;
+            for (int column = 1; column < 11; column++) {
+                int square = Players.getValueFromOpponentsSquare(row - 1, column - 1);
+                char squareSymbol = switch (square) {
+                    case EMPTY, SHIP -> EMPTY_SYMBOL;
+                    case HIT -> HIT_SYMBOL;
+                    case MISS -> MISS_SYMBOL;
                     default -> 0;
                 };
-                System.out.print(poleSymbol + " | ");
+                System.out.print(squareSymbol + " | ");
             }
             System.out.println();
         }
     }
 
-    static boolean sprawdzCzyCalyStatekTrafiony(int wierszMasztu, int kolumnaMasztu) {
-        for (int wiersz = wierszMasztu - 1; wiersz <= wierszMasztu + 1; wiersz++) {
-            for (int kolumna = kolumnaMasztu - 1; kolumna <= kolumnaMasztu + 1; kolumna++) {
-                if (((wiersz == wierszMasztu - 1) || (wiersz == wierszMasztu + 1)) && ((kolumna == kolumnaMasztu - 1) || (kolumna == kolumnaMasztu + 1))) {
-                    continue;
-                }
-                if (wiersz < 0 || wiersz >= Gracze.dajWielkoscAktualnejPlanszy() || kolumna < 0 || kolumna >= Gracze.dajWielkoscAktualnejPlanszy()) {
-                    continue;
-                }
-                if (Gracze.dajWartoscZpolaPrzeciwnika(wiersz, kolumna) == STATEK) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
-    public static boolean czyCalyStatekTrafiony(int wierszMasztu, int kolumnaMasztu, char strona) {
-        if (Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu, kolumnaMasztu) == STATEK) {
+    public static boolean isEntireShipHit(int mastHorizontalCoordinate, int mastVerticalCoordinate, char side) {
+        if (Players.getValueFromOpponentsSquare(mastHorizontalCoordinate, mastVerticalCoordinate) == SHIP) {
             return false;
         }
         boolean result = true;
 
-        if ((wierszMasztu - 1 >= 0) && (wierszMasztu - 1 < Gracze.dajWielkoscAktualnejPlanszy()) && (kolumnaMasztu >= 0) && (kolumnaMasztu < Gracze.dajWielkoscAktualnejPlanszy())) {
-            int sasiad1 = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu - 1, kolumnaMasztu);
-            if (strona == 'N') {
-                sasiad1 = PUDLO;
+        if ((mastHorizontalCoordinate - 1 >= 0) && (mastHorizontalCoordinate - 1 < Players.getCurrentBoardSize()) &&
+                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getCurrentBoardSize())) {
+            int neighbour1 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate - 1,
+                    mastVerticalCoordinate);
+            if (side == 'N') {
+                neighbour1 = MISS;
             }
-            if ((sasiad1 != PUDLO) && (sasiad1 != PUSTE)) { //&& nie wychodze poza mape
-                result = result && czyCalyStatekTrafiony(wierszMasztu - 1, kolumnaMasztu, 'S');
-            }
-        }
-
-        if ((wierszMasztu >= 0) && (wierszMasztu < Gracze.dajWielkoscAktualnejPlanszy()) && (kolumnaMasztu + 1 >= 0) && (kolumnaMasztu + 1 < Gracze.dajWielkoscAktualnejPlanszy())) {
-            int sasiad2 = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu, kolumnaMasztu + 1);
-            if (strona == 'E') {
-                sasiad2 = PUDLO;
-            }
-            if ((sasiad2 != PUDLO) && (sasiad2 != PUSTE)) { //&& nie wychodze poza mape
-                result = result && czyCalyStatekTrafiony(wierszMasztu, kolumnaMasztu + 1, 'W');
+            if ((neighbour1 != MISS) && (neighbour1 != EMPTY)) {
+                result = result && isEntireShipHit(mastHorizontalCoordinate - 1,
+                        mastVerticalCoordinate, 'S');
             }
         }
 
-        if ((wierszMasztu + 1 >= 0) && (wierszMasztu + 1 < Gracze.dajWielkoscAktualnejPlanszy()) && (kolumnaMasztu >= 0) && (kolumnaMasztu < Gracze.dajWielkoscAktualnejPlanszy())) {
-            int sasiad3 = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu + 1, kolumnaMasztu);
-            if (strona == 'S') {
-                sasiad3 = PUDLO;
+        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getCurrentBoardSize())
+                && (mastVerticalCoordinate + 1 >= 0) && (mastVerticalCoordinate + 1 < Players.getCurrentBoardSize())) {
+            int neighbour2 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
+                    mastVerticalCoordinate + 1);
+            if (side == 'E') {
+                neighbour2 = MISS;
             }
-            if ((sasiad3 != PUDLO) && (sasiad3 != PUSTE)) { //&& nie wychodze poza mape
-                result = result && czyCalyStatekTrafiony(wierszMasztu + 1, kolumnaMasztu, 'N');
+            if ((neighbour2 != MISS) && (neighbour2 != EMPTY)) {
+                result = result && isEntireShipHit(mastHorizontalCoordinate,
+                        mastVerticalCoordinate + 1, 'W');
             }
         }
-        if ((wierszMasztu >= 0) && (wierszMasztu < Gracze.dajWielkoscAktualnejPlanszy()) && (kolumnaMasztu - 1 >= 0) && (kolumnaMasztu - 1 < Gracze.dajWielkoscAktualnejPlanszy())){
-            int sasiad4 = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu, kolumnaMasztu - 1);
-            if (strona == 'W') {
-                sasiad4 = PUDLO;
+
+        if ((mastHorizontalCoordinate + 1 >= 0) && (mastHorizontalCoordinate + 1 < Players.getCurrentBoardSize()) &&
+                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getCurrentBoardSize())) {
+            int neighbour3 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate + 1,
+                    mastVerticalCoordinate);
+            if (side == 'S') {
+                neighbour3 = MISS;
             }
-            if ((sasiad4 != PUDLO) && (sasiad4 != PUSTE)) { //&& nie wychodze poza mape
-                result = result && czyCalyStatekTrafiony(wierszMasztu, kolumnaMasztu - 1, 'E');
+            if ((neighbour3 != MISS) && (neighbour3 != EMPTY)) {
+                result = result && isEntireShipHit(mastHorizontalCoordinate + 1,
+                        mastVerticalCoordinate, 'N');
+            }
+        }
+        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getCurrentBoardSize()) &&
+                (mastVerticalCoordinate - 1 >= 0) && (mastVerticalCoordinate - 1 < Players.getCurrentBoardSize())) {
+            int neighbour4 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
+                    mastVerticalCoordinate - 1);
+            if (side == 'W') {
+                neighbour4 = MISS;
+            }
+            if ((neighbour4 != MISS) && (neighbour4 != EMPTY)) {
+                result = result && isEntireShipHit(mastHorizontalCoordinate,
+                        mastVerticalCoordinate - 1, 'E');
             }
         }
         return result;
     }
 
-    private int[] dajSasiadow(int wierszMasztu, int kolumnaMasztu) {
-        int[] sasiedzi = new int[4];
-        sasiedzi[0] = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu - 1, kolumnaMasztu);
-        sasiedzi[1] = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu, kolumnaMasztu + 1);
-        sasiedzi[2] = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu + 1, kolumnaMasztu);
-        sasiedzi[3] = Gracze.dajWartoscZpolaPrzeciwnika(wierszMasztu, kolumnaMasztu - 1);
-        return sasiedzi;
+    private int[] getNeighbours(int mastHorizontalCoordinate, int mastVerticalCoordinate) {
+        int[] neighbours = new int[4];
+        neighbours[0] = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate - 1,
+                mastVerticalCoordinate);
+        neighbours[1] = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
+                mastVerticalCoordinate + 1);
+        neighbours[2] = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate + 1,
+                mastVerticalCoordinate);
+        neighbours[3] = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
+                mastVerticalCoordinate - 1);
+        return neighbours;
     }
 }

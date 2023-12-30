@@ -1,9 +1,9 @@
 import java.util.Arrays;
 
 public class ShipCreator {
-    static int iloscPoprawnychMasztow = 0;
+    static int numberOfCorrectMasts = 0;
 
-    static int[][] narysujStatek() {
+    static int[][] drawShip() {
         int[][] maszty = new int[wielkoscStatku][2];
         Narzedzia.uzupelnijTabliceDwuwymiarowaLiczba(maszty, 100);
         //jak te maszty są ok to wpisujemy w plansze uzytkownika
@@ -15,18 +15,18 @@ public class ShipCreator {
             if (Gracze.czyTuraCzlowieka()) {
                 Statki.wydrukujPlansze();
             }
-            return narysujStatek();
+            return drawShip();
         }
         return maszty;
     }
 
     public static void narysujMaszty(int[][] maszty) {
         for (int i = 0; i < wielkoscStatku; i++) {
-            int[] maszt = dajWierszIkolumneMasztu();
+            int[] maszt = getMastCoordinates();
             int wierszStatku = maszt[0];
             int kolumnaStatku = maszt[1];
             if (Gracze.czyTuraCzlowieka()) {
-                if (!czyWplanszy(wierszStatku, kolumnaStatku)) {
+                if (!checkIfWithinBoard(wierszStatku, kolumnaStatku)) {
                     System.out.println("Podane pole jest poza planszą. Spróbuj jeszcze raz.");
                     narysujMaszty(maszty);
                     return;
@@ -44,19 +44,19 @@ public class ShipCreator {
                 narysujMaszty(maszty);
                 return;
             }
-            maszty[iloscPoprawnychMasztow] = new int[]{wierszStatku, kolumnaStatku};
+            maszty[numberOfCorrectMasts] = new int[]{wierszStatku, kolumnaStatku};
             if (Gracze.czyTuraCzlowieka()) {
                 Statki.wydrukujPlansze(maszty);
             }
-            iloscPoprawnychMasztow++;
-            if (iloscPoprawnychMasztow == wielkoscStatku) {
-                iloscPoprawnychMasztow = 0;
+            numberOfCorrectMasts++;
+            if (numberOfCorrectMasts == wielkoscStatku) {
+                numberOfCorrectMasts = 0;
                 break;
             }
         }
     }
 
-    static int[] dajWierszIkolumneMasztu() {
+    static int[] getMastCoordinates() {
         int[] maszt = new int[2];
         if (Gracze.czyTuraCzlowieka()) {
             maszt[1] = Gracze.ustalKolumneJesliCzlowiek();
@@ -68,7 +68,7 @@ public class ShipCreator {
         return maszt;
     }
 
-    static boolean czyWplanszy(int wierszIndex, int kolumnaIndex) {
+    static boolean checkIfWithinBoard(int wierszIndex, int kolumnaIndex) {
         return wierszIndex >= 0 && wierszIndex <= 9 && kolumnaIndex >= 0 && kolumnaIndex <= 9;
     }
 

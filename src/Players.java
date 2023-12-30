@@ -1,6 +1,6 @@
 public class Players {
-    private static int[][] playersOneGrid = new int[10][10];
-    private static int[][] playersTwoGrid = new int[10][10];
+    private static int[][] playersOneBoard = new int[10][10];
+    private static int[][] playersTwoBoard = new int[10][10];
     private static final int PLAYER1 = 0;
     private static final int PLAYER2 = 1;
     private static int currentPlayer = PLAYER1;
@@ -8,19 +8,19 @@ public class Players {
     private static String playerTwo = "Gracz Drugi";
 
     private static int[][] getCurrentPlayersBoard() {
-        return currentPlayer == PLAYER1 ? playersOneGrid : playersTwoGrid;
+        return currentPlayer == PLAYER1 ? playersOneBoard : playersTwoBoard;
     }
 
     private static int[][] getOpponentsBoard() {
-        return currentPlayer == PLAYER1 ? playersTwoGrid : playersOneGrid;
+        return currentPlayer == PLAYER1 ? playersTwoBoard : playersOneBoard;
     }
 
-    static int getCurrentBoardsSize() {
+    static int getCurrentBoardSize() {
         int[][] currentBoard = getCurrentPlayersBoard();
         return currentBoard.length;
     }
 
-    static String getCurrentsPlayerName() {
+    static String getCurrentPlayersName() {
         return currentPlayer == PLAYER1 ? playerOne : playerTwo;
     }
 
@@ -70,9 +70,9 @@ public class Players {
         return opponentsBoard[horizontalCoordinate][verticalCoordinate];
     }
 
-    static void addShipToCurrentBoard(int horizontalCoordinate, int verticalCoordinate) {
+    static void addMastToCurrentSquare(int horizontalCoordinate, int verticalCoordinate) {
         int[][] currentBoard = getCurrentPlayersBoard();
-        currentBoard[horizontalCoordinate][verticalCoordinate] = Game.STATEK;
+        currentBoard[horizontalCoordinate][verticalCoordinate] = Game.SHIP;
     }
 
     static void addSymbolToOpponentsBoard(int horizontalCoordinate, int verticalCoordinate, int symbol) {
@@ -85,7 +85,7 @@ public class Players {
         int[][] opponentsBoard = getOpponentsBoard();
         for (int row = 0; row < opponentsBoard.length; row++) {
             for (int column = 0; column < opponentsBoard[row].length; column++) {
-                if (opponentsBoard[row][column] == Game.STATEK){
+                if (opponentsBoard[row][column] == Game.SHIP){
                     unshotShip = true;
                     return unshotShip;
                 }
@@ -102,17 +102,17 @@ public class Players {
     }
 
     public static void fillInHumansBoardForTesting() {
-        playersOneGrid = new int[][]{
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.STATEK,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.STATEK,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.STATEK,Game.STATEK,Game.STATEK,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE},
-                {Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE,Game.PUSTE}
+        playersOneBoard = new int[][]{
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.SHIP,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.SHIP,Game.SHIP,Game.SHIP,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
+                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY}
         };
     }
 }

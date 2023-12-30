@@ -5,8 +5,8 @@ public class HumanAlgorithm {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Podaj indeks kolumny:");
         Character verticalCoordinate = scanner.next().charAt(0);
-        for (int i = 0; i < Game.zbiorAlfabetyczny.length; i++) {
-            if (verticalCoordinate.equals(Game.zbiorAlfabetyczny[i])) {
+        for (int i = 0; i < Game.gridLetters.length; i++) {
+            if (verticalCoordinate.equals(Game.gridLetters[i])) {
                 return i;
             }
         }
