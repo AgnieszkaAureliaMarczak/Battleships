@@ -1,3 +1,5 @@
+package battleships;
+
 import java.util.Random;
 
 public class ComputerAlgorithm {

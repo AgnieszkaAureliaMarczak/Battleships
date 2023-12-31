@@ -1,15 +1,17 @@
-import java.util.Arrays;
+package battleships;
 
+import java.util.Arrays;
+import static battleships.Game.shipSize;
 public class ShipCreator {
     static int numberOfCorrectMasts = 0;
 
     static int[][] drawShip() {
-        int[][] maszty = new int[wielkoscStatku][2];
-        Narzedzia.uzupelnijTabliceDwuwymiarowaLiczba(maszty, 100);
+        int[][] masts = new int[shipSize][2];
+        Narzedzia.uzupelnijTabliceDwuwymiarowaLiczba(masts, 100);
         //jak te maszty są ok to wpisujemy w plansze uzytkownika
-        narysujMaszty(maszty);
+        narysujMaszty(masts);
 
-        if (!sprawdzCzyMasztyPrzylegajaDoSiebie(maszty)) {
+        if (!sprawdzCzyMasztyPrzylegajaDoSiebie(masts)) {
             Gracze.wyswietlJesliCzlowiek("Ups. Narysowany statek jest niepoprawny. Każdy maszt statku musi " +
                     "stykać się z jego kolejnym masztem ścianką boczną. Spróbuj jeszcze raz.");
             if (Gracze.czyTuraCzlowieka()) {
@@ -17,7 +19,7 @@ public class ShipCreator {
             }
             return drawShip();
         }
-        return maszty;
+        return masts;
     }
 
     public static void narysujMaszty(int[][] maszty) {

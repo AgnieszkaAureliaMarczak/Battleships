@@ -1,3 +1,5 @@
+package battleships;
+
 import java.util.Scanner;
 
 public class Game {

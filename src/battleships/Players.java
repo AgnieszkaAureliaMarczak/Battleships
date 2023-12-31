@@ -1,3 +1,5 @@
+package battleships;
+
 public class Players {
     private static int[][] playersOneBoard = new int[10][10];
     private static int[][] playersTwoBoard = new int[10][10];
