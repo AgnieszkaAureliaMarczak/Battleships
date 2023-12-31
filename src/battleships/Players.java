@@ -17,7 +17,7 @@ public class Players {
         return currentPlayer == PLAYER1 ? playersTwoBoard : playersOneBoard;
     }
 
-    static int getCurrentBoardSize() {
+    static int getBoardSize() {
         int[][] currentBoard = getCurrentPlayersBoard();
         return currentBoard.length;
     }
@@ -87,7 +87,7 @@ public class Players {
         int[][] opponentsBoard = getOpponentsBoard();
         for (int row = 0; row < opponentsBoard.length; row++) {
             for (int column = 0; column < opponentsBoard[row].length; column++) {
-                if (opponentsBoard[row][column] == Game.SHIP){
+                if (opponentsBoard[row][column] == Game.SHIP) {
                     unshotShip = true;
                     return unshotShip;
                 }
@@ -96,25 +96,26 @@ public class Players {
         return unshotShip;
     }
 
-    public static boolean isHumansMove() {
+    static boolean isHumansMove() {
         return currentPlayer == PLAYER1;
     }
-    public static boolean isComputersMove() {
+
+    static boolean isComputersMove() {
         return currentPlayer == PLAYER2;
     }
 
     public static void fillInHumansBoardForTesting() {
         playersOneBoard = new int[][]{
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.SHIP,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.SHIP,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.SHIP,Game.SHIP,Game.SHIP,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY},
-                {Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY,Game.EMPTY}
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.SHIP, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.SHIP, Game.SHIP, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.SHIP, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.SHIP, Game.SHIP, Game.SHIP, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
+                {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY}
         };
     }
 }

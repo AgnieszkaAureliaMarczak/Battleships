@@ -95,13 +95,13 @@ public class Game {
             System.out.print(gridLetter + " | ");
         }
         System.out.println();
-        for (int row = 1; row < 11; row++) {
-            if (row <= 9) {
+        for (int row = 1; row < Players.getBoardSize() + 1; row++) {
+            if (row <= Players.getBoardSize() - 1) {
                 System.out.print("0" + row + "| ");
             } else {
                 System.out.print(row + "| ");
             }
-            for (int column = 1; column < 11; column++) {
+            for (int column = 1; column < Players.getBoardSize() + 1; column++) {
                 int square = Players.getValueFromCurrentPlayersSquare(row - 1, column - 1);
                 char squareSymbol = switch (square) {
                     case EMPTY -> EMPTY_SYMBOL;
@@ -122,13 +122,13 @@ public class Game {
             System.out.print(gridLetter + " | ");
         }
         System.out.println();
-        for (int row = 1; row < 11; row++) {
-            if (row <= 9) {
+        for (int row = 1; row < Players.getBoardSize() + 1; row++) {
+            if (row <= Players.getBoardSize() - 1) {
                 System.out.print("0" + row + "| ");
             } else {
                 System.out.print(row + "| ");
             }
-            for (int column = 1; column < 11; column++) {
+            for (int column = 1; column < Players.getBoardSize() + 1; column++) {
                 char squareSymbol = getSquareSymbol(trialShip, row, column);
                 System.out.print(squareSymbol + " | ");
             }
@@ -163,7 +163,7 @@ public class Game {
             numberOfSameSizeShips = establishNumberOfSameSizeShips();
             for (int shipNumber = 0; shipNumber < numberOfSameSizeShips; shipNumber++) {
                 Players.printIfCurrentPlayerIsHuman("Narysuj statek. Ilosc masztów: " + shipSize);
-                int[][] shipCoordinates = ShipCreator.drawShip();
+                int[][] shipCoordinates = ShipDrawing.drawShip();
                 addShipToBoard(shipCoordinates);
                 printBoard();
             }
@@ -190,11 +190,11 @@ public class Game {
     }
 
     static int[] getPlayersMove() {
-        int[] mast = ShipCreator.getMastCoordinates();
+        int[] mast = ShipDrawing.getMastCoordinates();
         int horizontalCoordinate = mast[0];
         int verticalCoordinate = mast[1];
         if (Players.isHumansMove()) {
-            if (!ShipCreator.checkIfWithinBoard(horizontalCoordinate, verticalCoordinate)) {
+            if (!ShipDrawing.checkIfWithinBoard(horizontalCoordinate, verticalCoordinate)) {
                 System.out.println("Podane pole jest poza planszą. Spróbuj jeszcze raz.");
                 return getPlayersMove();
             }
@@ -225,13 +225,13 @@ public class Game {
             System.out.print(gridLetters[i] + " | ");
         }
         System.out.println();
-        for (int row = 1; row < 11; row++) {
-            if (row <= 9) {
+        for (int row = 1; row < Players.getBoardSize() + 1; row++) {
+            if (row <= Players.getBoardSize() - 1) {
                 System.out.print("0" + row + "| ");
             } else {
                 System.out.print(row + "| ");
             }
-            for (int column = 1; column < 11; column++) {
+            for (int column = 1; column < Players.getBoardSize() + 1; column++) {
                 int square = Players.getValueFromOpponentsSquare(row - 1, column - 1);
                 char squareSymbol = switch (square) {
                     case EMPTY, SHIP -> EMPTY_SYMBOL;
@@ -245,14 +245,14 @@ public class Game {
         }
     }
 
-    public static boolean isEntireShipHit(int mastHorizontalCoordinate, int mastVerticalCoordinate, char side) {
+    static boolean isEntireShipHit(int mastHorizontalCoordinate, int mastVerticalCoordinate, char side) {
         if (Players.getValueFromOpponentsSquare(mastHorizontalCoordinate, mastVerticalCoordinate) == SHIP) {
             return false;
         }
         boolean result = true;
 
-        if ((mastHorizontalCoordinate - 1 >= 0) && (mastHorizontalCoordinate - 1 < Players.getCurrentBoardSize()) &&
-                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getCurrentBoardSize())) {
+        if ((mastHorizontalCoordinate - 1 >= 0) && (mastHorizontalCoordinate - 1 < Players.getBoardSize()) &&
+                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getBoardSize())) {
             int neighbour1 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate - 1,
                     mastVerticalCoordinate);
             if (side == 'N') {
@@ -264,8 +264,8 @@ public class Game {
             }
         }
 
-        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getCurrentBoardSize())
-                && (mastVerticalCoordinate + 1 >= 0) && (mastVerticalCoordinate + 1 < Players.getCurrentBoardSize())) {
+        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getBoardSize())
+                && (mastVerticalCoordinate + 1 >= 0) && (mastVerticalCoordinate + 1 < Players.getBoardSize())) {
             int neighbour2 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
                     mastVerticalCoordinate + 1);
             if (side == 'E') {
@@ -277,8 +277,8 @@ public class Game {
             }
         }
 
-        if ((mastHorizontalCoordinate + 1 >= 0) && (mastHorizontalCoordinate + 1 < Players.getCurrentBoardSize()) &&
-                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getCurrentBoardSize())) {
+        if ((mastHorizontalCoordinate + 1 >= 0) && (mastHorizontalCoordinate + 1 < Players.getBoardSize()) &&
+                (mastVerticalCoordinate >= 0) && (mastVerticalCoordinate < Players.getBoardSize())) {
             int neighbour3 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate + 1,
                     mastVerticalCoordinate);
             if (side == 'S') {
@@ -289,8 +289,8 @@ public class Game {
                         mastVerticalCoordinate, 'N');
             }
         }
-        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getCurrentBoardSize()) &&
-                (mastVerticalCoordinate - 1 >= 0) && (mastVerticalCoordinate - 1 < Players.getCurrentBoardSize())) {
+        if ((mastHorizontalCoordinate >= 0) && (mastHorizontalCoordinate < Players.getBoardSize()) &&
+                (mastVerticalCoordinate - 1 >= 0) && (mastVerticalCoordinate - 1 < Players.getBoardSize())) {
             int neighbour4 = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate,
                     mastVerticalCoordinate - 1);
             if (side == 'W') {
@@ -304,7 +304,7 @@ public class Game {
         return result;
     }
 
-    private int[] getNeighbours(int mastHorizontalCoordinate, int mastVerticalCoordinate) {
+    private static int[] getNeighbours(int mastHorizontalCoordinate, int mastVerticalCoordinate) {
         int[] neighbours = new int[4];
         neighbours[0] = Players.getValueFromOpponentsSquare(mastHorizontalCoordinate - 1,
                 mastVerticalCoordinate);
