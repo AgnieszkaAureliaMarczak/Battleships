@@ -73,7 +73,7 @@ public class Game {
                     "(nie może łączyć się na ukos)" +
                     " oraz dwa statki nie mogę “dotykać” się żadnym bokiem masztu.\n" +
                     "Zaczynamy grę!");
-            /*if (Gracze.czyTuraKomputera()) { // fragment tylko do testow!
+            /*if (Gracze.czyTuraKomputera()) { // for tests only!!
                 uzupelnijPlanszeStatkami();
             } else {
                 Gracze.uzupelnijPlanszeCzlowiekaDoTestow();

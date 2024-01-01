@@ -117,7 +117,7 @@ public class ShipDrawing {
         boolean correctMasts;
         switch (shipSize) {
             case 4, 3 -> correctMasts = checkIfCorrectMasts(shipCoordinates);
-            case 2 -> correctMasts = checkIfOnlyTwoMastsCorrect(shipCoordinates);
+            case 2 -> correctMasts = checkIfMastsOfTwoSquareShipCorrect(shipCoordinates);
             default -> correctMasts = true;
         }
         return correctMasts;
@@ -139,7 +139,7 @@ public class ShipDrawing {
         boolean mastsAdjacentInColumn = checkIfMastsAdjacentInColumn(sortMastsByHorizontalCoordinate
                 (shipCoordinates, 0));
         if (mastsAdjacentInColumn) {
-            if (countMastsAdjacentInColumn(shipCoordinatesSortedByVertical) == shipSize) {
+            if (countMastsAdjacentInColumn(shipCoordinatesSortedByHorizontal) == shipSize) {
                 correctMasts = true;
                 return correctMasts;
             }
@@ -197,136 +197,124 @@ public class ShipDrawing {
         return masts;
     }
 
-
-    private static boolean checkIfMastsAdjacentInRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
-        boolean poprawnyWiersz = false;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][0] == wierszMasztu) {
-                    if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][1] == posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][1] + 1 || posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][1] == posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][1] - 1) {
-                        poprawnyWiersz = true;
+    private static boolean checkIfMastsAdjacentInRow(int[][] shipCoordinatesSortedByVertical) {
+        boolean correctRow = false;
+        for (int row = 0; row < shipSize; row++) {
+            int mastHorizontalCoordinate = shipCoordinatesSortedByVertical[row][0];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByVertical[nextRow][0] == mastHorizontalCoordinate) {
+                    if (shipCoordinatesSortedByVertical[nextRow][1] == shipCoordinatesSortedByVertical[row][1] + 1 ||
+                            shipCoordinatesSortedByVertical[nextRow][1] == shipCoordinatesSortedByVertical[row][1] - 1) {
+                        correctRow = true;
                         break;
                     } else {
-                        poprawnyWiersz = false;
-                        return poprawnyWiersz;
+                        correctRow = false;
+                        return correctRow;
                     }
                 }
             }
         }
-        return poprawnyWiersz;
+        return correctRow;
     }
 
-    static int countMastsAdjacentInRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
-        int przylegajaceMaszty = 1;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][0] == wierszMasztu) {
-                    if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][1] == posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][1] + 1) {
-                        przylegajaceMaszty++;
+    private static int countMastsAdjacentInRow(int[][] shipCoordinatesSortedByVertical) {
+        int adjacentMasts = 1;
+        for (int row = 0; row < shipSize; row++) {
+            int mastHorizontalCoordinate = shipCoordinatesSortedByVertical[row][0];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByVertical[nextRow][0] == mastHorizontalCoordinate) {
+                    if (shipCoordinatesSortedByVertical[nextRow][1] == shipCoordinatesSortedByVertical[row][1] + 1) {
+                        adjacentMasts++;
                     }
                 }
             }
         }
-        //    System.out.println("Przylegajace w wierszu: " + przylegajaceMaszty);
-        return przylegajaceMaszty;
+        return adjacentMasts;
     }
 
-    static int findAdjacentRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
-        int przylegajacyWiersz = -1;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][0] == wierszMasztu) {
-                    if (posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][1] == posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][1] + 1 || posortowanaTablicaWgKolumnyMasztu[kolejnyWierszPosortowanejTablicy][1] == posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][1] - 1) {
-                        przylegajacyWiersz = wierszMasztu;
+    private static int findAdjacentRow(int[][] shipCoordinatesSortedByVertical) {
+        int adjacentRow = -1;
+        for (int row = 0; row < shipSize; row++) {
+            int mastHorizontalCoordinate = shipCoordinatesSortedByVertical[row][0];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByVertical[nextRow][0] == mastHorizontalCoordinate) {
+                    if (shipCoordinatesSortedByVertical[nextRow][1] == shipCoordinatesSortedByVertical[row][1] + 1 ||
+                            shipCoordinatesSortedByVertical[nextRow][1] == shipCoordinatesSortedByVertical[row][1] - 1) {
+                        adjacentRow = mastHorizontalCoordinate;
                     }
                 }
             }
         }
-        //    System.out.println("Przylegajacy wiersz: " + przylegajacyWiersz);
-        return przylegajacyWiersz;
+        return adjacentRow;
     }
 
-    static boolean checkIfMastsAdjacentInColumn(int[][] posortowanaTablicaWgWierszuMasztu) {
-            /*System.out.println("Posortowane maszty wg wiersza - z metody:");
-            for (int[] rzad : posortowanaTablicaWgWierszuMasztu) {
-                for (int pozycja : rzad) {
-                    System.out.print(pozycja + " ");
-                }
-                System.out.println("");
-            }*/
-        boolean poprawnaKolumna = false;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int kolumnaMasztu = posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][1];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][1] == kolumnaMasztu) {
-                    if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] + 1 || posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] - 1) {
-                        poprawnaKolumna = true;
+    private static boolean checkIfMastsAdjacentInColumn(int[][] shipCoordinatesSortedByHorizontal) {
+        boolean correctColumn = false;
+        for (int row = 0; row < shipSize; row++) {
+            int mastVerticalCoordinate = shipCoordinatesSortedByHorizontal[row][1];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByHorizontal[nextRow][1] == mastVerticalCoordinate) {
+                    if (shipCoordinatesSortedByHorizontal[nextRow][0] == shipCoordinatesSortedByHorizontal[row][0] + 1 ||
+                            shipCoordinatesSortedByHorizontal[nextRow][0] == shipCoordinatesSortedByHorizontal[row][0] - 1) {
+                        correctColumn = true;
                         break;
                     } else {
-                        poprawnaKolumna = false;
-                        return poprawnaKolumna;
+                        correctColumn = false;
+                        return correctColumn;
                     }
                 }
             }
         }
-        return poprawnaKolumna;
+        return correctColumn;
     }
 
-    static int countMastsAdjacentInColumn(int[][] posortowanaTablicaWgWierszuMasztu) {
-        int przylegajaceMaszty = 1;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int kolumnaMasztu = posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][1];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][1] == kolumnaMasztu) {
-                    if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] + 1) {
-                        przylegajaceMaszty++;
+    private static int countMastsAdjacentInColumn(int[][] shipCoordinatesSortedByHorizontal) {
+        int adjacentMasts = 1;
+        for (int row = 0; row < shipSize; row++) {
+            int mastVerticalCoordinate = shipCoordinatesSortedByHorizontal[row][1];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByHorizontal[nextRow][1] == mastVerticalCoordinate) {
+                    if (shipCoordinatesSortedByHorizontal[nextRow][0] == shipCoordinatesSortedByHorizontal[row][0] + 1) {
+                        adjacentMasts++;
                     }
                 }
             }
         }
-        //  System.out.println("Przylegajace w kolumnie: " + przylegajaceMaszty);
-        return przylegajaceMaszty;
+        return adjacentMasts;
     }
 
-    static boolean checkIfRowAndColumnAdjacentToEachOther(int[][] posortowanaTablicaWgWierszuMasztu, int przylegajacyWiersz) {
-            /*System.out.println("Czy wiersz i kolumna przylegaja do siebie: posortowane maszty wg wiersza");
-            for (int[] rzad : posortowanaTablicaWgWierszuMasztu) {
-                for (int pozycja : rzad) {
-                    System.out.print(pozycja + " ");
-                }
-                System.out.println("");
-            }*/
-        boolean czyPrzylegajaDoSiebie = false;
-        for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
-            int kolumnaMasztu = posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][1];
-            for (int kolejnyWierszPosortowanejTablicy = wierszPosortowanejTablicy + 1; kolejnyWierszPosortowanejTablicy < wielkoscStatku; kolejnyWierszPosortowanejTablicy++) {
-                if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][1] == kolumnaMasztu) {
-                    if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] + 1 || posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] - 1) {
-                        if (posortowanaTablicaWgWierszuMasztu[kolejnyWierszPosortowanejTablicy][0] == przylegajacyWiersz || posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][0] == przylegajacyWiersz) {
-                            czyPrzylegajaDoSiebie = true;
-                            return czyPrzylegajaDoSiebie;
+    private static boolean checkIfRowAndColumnAdjacentToEachOther(int[][] shipCoordinatesSortedByHorizontal,
+                                                                  int przylegajacyWiersz) {
+        boolean RowAndColumnAdjacent = false;
+        for (int row = 0; row < shipSize; row++) {
+            int mastVerticalCoordinate = shipCoordinatesSortedByHorizontal[row][1];
+            for (int nextRow = row + 1; nextRow < shipSize; nextRow++) {
+                if (shipCoordinatesSortedByHorizontal[nextRow][1] == mastVerticalCoordinate) {
+                    if (shipCoordinatesSortedByHorizontal[nextRow][0] == shipCoordinatesSortedByHorizontal[row][0] + 1 ||
+                            shipCoordinatesSortedByHorizontal[nextRow][0] == shipCoordinatesSortedByHorizontal[row][0] - 1) {
+                        if (shipCoordinatesSortedByHorizontal[nextRow][0] == przylegajacyWiersz ||
+                                shipCoordinatesSortedByHorizontal[row][0] == przylegajacyWiersz) {
+                            RowAndColumnAdjacent = true;
+                            return RowAndColumnAdjacent;
                         }
                     }
                 }
             }
         }
-        return czyPrzylegajaDoSiebie;
+        return RowAndColumnAdjacent;
     }
 
-    static boolean checkIfOnlyTwoMastsCorrect(int[][] tablicaDwumasztowca) {
-        boolean poprawneDwaMaszty = false;
-        if (tablicaDwumasztowca[0][0] == tablicaDwumasztowca[1][0]) {
-            if ((tablicaDwumasztowca[0][1] == tablicaDwumasztowca[1][1] + 1) || (tablicaDwumasztowca[0][1] == tablicaDwumasztowca[1][1] - 1)) {
-                poprawneDwaMaszty = true;
+    private static boolean checkIfMastsOfTwoSquareShipCorrect(int[][] twoMasts) {
+        boolean correctMasts = false;
+        if (twoMasts[0][0] == twoMasts[1][0]) {
+            if ((twoMasts[0][1] == twoMasts[1][1] + 1) || (twoMasts[0][1] == twoMasts[1][1] - 1)) {
+                correctMasts = true;
             }
-        } else if (tablicaDwumasztowca[0][1] == tablicaDwumasztowca[1][1]) {
-            if ((tablicaDwumasztowca[0][0] == tablicaDwumasztowca[1][0] + 1) || (tablicaDwumasztowca[0][0] == tablicaDwumasztowca[1][0] - 1)) {
-                poprawneDwaMaszty = true;
+        } else if (twoMasts[0][1] == twoMasts[1][1]) {
+            if ((twoMasts[0][0] == twoMasts[1][0] + 1) || (twoMasts[0][0] == twoMasts[1][0] - 1)) {
+                correctMasts = true;
             }
         }
-        return poprawneDwaMaszty;
+        return correctMasts;
     }
 }
