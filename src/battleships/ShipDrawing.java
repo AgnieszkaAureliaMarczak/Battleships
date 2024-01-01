@@ -123,102 +123,82 @@ public class ShipDrawing {
         return correctMasts;
     }
 
-    private static boolean checkIfCorrectMasts(int[][] wspolrzedneStatku) { //refactor?
-        boolean poprawneMaszty = false;
-        int[][] posortowaneWspolrzedneStatkuWgKolumny = sortujMasztyWgIchKolumny(wspolrzedneStatku, 1);
-        int[][] posortowaneWspolrzedneStatkuWgWiersza = sortujMasztyWgIchWiersza(wspolrzedneStatku, 0);
-        boolean czyMasztyPrzylegajaWwierszu = sprawdzCzyMasztyPrzylegajaWwierszu(sortujMasztyWgIchKolumny(wspolrzedneStatku, 1));
-        if (czyMasztyPrzylegajaWwierszu) {
-            if (policzMasztyPrzylegajaceWwierszu(posortowaneWspolrzedneStatkuWgKolumny) == wielkoscStatku) {
-                poprawneMaszty = true;
-                return poprawneMaszty;
+    private static boolean checkIfCorrectMasts(int[][] shipCoordinates) {
+        boolean correctMasts = false;
+        int[][] shipCoordinatesSortedByVertical = sortMastsByVerticalCoordinate(shipCoordinates, 1);
+        int[][] shipCoordinatesSortedByHorizontal = sortMastsByHorizontalCoordinate
+                (shipCoordinates, 0);
+        boolean mastsAdjacentInRow = checkIfMastsAdjacentInRow(sortMastsByVerticalCoordinate
+                (shipCoordinates, 1));
+        if (mastsAdjacentInRow) {
+            if (countMastsAdjacentInRow(shipCoordinatesSortedByVertical) == shipSize) {
+                correctMasts = true;
+                return correctMasts;
             }
         }
-        boolean czyMasztyPrzylegajaWkolumnie = sprawdzCzyMasztyPrzylegajaWkolumnie(sortujMasztyWgIchWiersza(wspolrzedneStatku, 0));
-        if (czyMasztyPrzylegajaWkolumnie) {
-            if (policzMasztyPrzylegajaceWkolumnie(posortowaneWspolrzedneStatkuWgKolumny) == wielkoscStatku) {
-                poprawneMaszty = true;
-                return poprawneMaszty;
+        boolean mastsAdjacentInColumn = checkIfMastsAdjacentInColumn(sortMastsByHorizontalCoordinate
+                (shipCoordinates, 0));
+        if (mastsAdjacentInColumn) {
+            if (countMastsAdjacentInColumn(shipCoordinatesSortedByVertical) == shipSize) {
+                correctMasts = true;
+                return correctMasts;
             }
         }
-        if (czyMasztyPrzylegajaWwierszu && czyMasztyPrzylegajaWkolumnie) {
-            int przylegajacyWiersz = ustalPrzylegajacyWiersz(posortowaneWspolrzedneStatkuWgKolumny);
-            if (sprawdzCzyWierszIkolumnaPrzylegajaDoSiebie(posortowaneWspolrzedneStatkuWgWiersza, przylegajacyWiersz)) {
-                if ((wielkoscStatku == 4) && (policzMasztyPrzylegajaceWwierszu(posortowaneWspolrzedneStatkuWgKolumny) == 2) && (policzMasztyPrzylegajaceWkolumnie(posortowaneWspolrzedneStatkuWgKolumny) == 2)) {
-                    return poprawneMaszty;
+        if (mastsAdjacentInRow && mastsAdjacentInColumn) {
+            int adjacentRow = findAdjacentRow(shipCoordinatesSortedByVertical);
+            if (checkIfRowAndColumnAdjacentToEachOther(shipCoordinatesSortedByHorizontal, adjacentRow)) {
+                if ((shipSize == 4) && (countMastsAdjacentInRow(shipCoordinatesSortedByVertical) == 2) &&
+                        (countMastsAdjacentInColumn(shipCoordinatesSortedByVertical) == 2)) {
+                    return correctMasts;
                 }
-                poprawneMaszty = true;
-                return poprawneMaszty;
+                correctMasts = true;
+                return correctMasts;
             }
         }
-        return poprawneMaszty;
+        return correctMasts;
     }
 
-    public static int[][] sortujMasztyWgIchKolumny(int[][] tablicaDoSortowania, int kolumna) {
-        int[] tymczasowaTablica = new int[2];
-        for (int wiersz = 0; wiersz < tablicaDoSortowania.length; wiersz++) {
-            for (int kolejnyWiersz = 1; kolejnyWiersz < tablicaDoSortowania.length - wiersz; kolejnyWiersz++) {
-                if (tablicaDoSortowania[kolejnyWiersz][kolumna] < tablicaDoSortowania[kolejnyWiersz - 1][kolumna]) {
-                    tymczasowaTablica[0] = tablicaDoSortowania[kolejnyWiersz - 1][kolumna - 1];
-                    tymczasowaTablica[1] = tablicaDoSortowania[kolejnyWiersz - 1][kolumna];
-                    tablicaDoSortowania[kolejnyWiersz - 1][kolumna] = tablicaDoSortowania[kolejnyWiersz][kolumna];
-                    tablicaDoSortowania[kolejnyWiersz - 1][kolumna - 1] = tablicaDoSortowania[kolejnyWiersz][kolumna - 1];
-                    tablicaDoSortowania[kolejnyWiersz][kolumna - 1] = tymczasowaTablica[0];
-                    tablicaDoSortowania[kolejnyWiersz][kolumna] = tymczasowaTablica[1];
-                }
-            }
-        }
-        /*System.out.println("Maszty posortowane wg kolumny");
-        for (int[] rzad : tablicaDoSortowania) {
-            for (int pozycja : rzad) {
-                System.out.print(pozycja + " ");
-            }
-            System.out.println("");
-        }*/
-        return tablicaDoSortowania;
-    }
-
-    public static int[][] sortujMasztyWgIchWiersza(int[][] tablicaDoSortowania, int kolumna) {
-        int[] tymczasowaTablica = new int[2];
-        for (int wiersz = 0; wiersz < tablicaDoSortowania.length; wiersz++) {
-            for (int kolejnyWiersz = 1; kolejnyWiersz < tablicaDoSortowania.length - wiersz; kolejnyWiersz++) {
-                if (tablicaDoSortowania[kolejnyWiersz][kolumna] < tablicaDoSortowania[kolejnyWiersz - 1][kolumna]) {
-                    tymczasowaTablica[0] = tablicaDoSortowania[kolejnyWiersz - 1][kolumna];
-                    tymczasowaTablica[1] = tablicaDoSortowania[kolejnyWiersz - 1][kolumna + 1];
-                    tablicaDoSortowania[kolejnyWiersz - 1][kolumna] = tablicaDoSortowania[kolejnyWiersz][kolumna];
-                    tablicaDoSortowania[kolejnyWiersz - 1][kolumna + 1] = tablicaDoSortowania[kolejnyWiersz][kolumna + 1];
-                    tablicaDoSortowania[kolejnyWiersz][kolumna] = tymczasowaTablica[0];
-                    tablicaDoSortowania[kolejnyWiersz][kolumna + 1] = tymczasowaTablica[1];
+    private static int[][] sortMastsByVerticalCoordinate(int[][] masts, int columnOfVerticalCoordinate) {
+        int[] tempTable = new int[2];
+        for (int row = 0; row < masts.length; row++) {
+            for (int nextRow = 1; nextRow < masts.length - row; nextRow++) {
+                if (masts[nextRow][columnOfVerticalCoordinate] < masts[nextRow - 1][columnOfVerticalCoordinate]) {
+                    tempTable[0] = masts[nextRow - 1][columnOfVerticalCoordinate - 1];
+                    tempTable[1] = masts[nextRow - 1][columnOfVerticalCoordinate];
+                    masts[nextRow - 1][columnOfVerticalCoordinate] = masts[nextRow][columnOfVerticalCoordinate];
+                    masts[nextRow - 1][columnOfVerticalCoordinate - 1] = masts[nextRow][columnOfVerticalCoordinate - 1];
+                    masts[nextRow][columnOfVerticalCoordinate - 1] = tempTable[0];
+                    masts[nextRow][columnOfVerticalCoordinate] = tempTable[1];
                 }
             }
         }
+        return masts;
+    }
 
-        int[][] kopia = new int[tablicaDoSortowania.length][tablicaDoSortowania[0].length];
-        for (int wiersz = 0, tablicaDoSortowaniaLength = tablicaDoSortowania.length; wiersz < tablicaDoSortowaniaLength; wiersz++) {
-            kopia[wiersz] = Arrays.copyOf(tablicaDoSortowania[wiersz], tablicaDoSortowania[wiersz].length);
-          /*  for (int kolumnaPrzegladana = 0; kolumnaPrzegladana < tablicaDoSortowania[wiersz].length; kolumnaPrzegladana++) {
-                kopia[wiersz][kolumna] = tablicaDoSortowania[wiersz][kolumna];
-            }*/
-        }
-        /*System.out.println("Maszty posortowane wg wiersza");
-        for (int[] rzad : tablicaDoSortowania) {
-            for (int pozycja : rzad) {
-                System.out.print(pozycja + " ");
+    private static int[][] sortMastsByHorizontalCoordinate(int[][] masts, int columnOfHorizontalCoordinate) {
+        int[] tempTable = new int[2];
+        for (int row = 0; row < masts.length; row++) {
+            for (int nextRow = 1; nextRow < masts.length - row; nextRow++) {
+                if (masts[nextRow][columnOfHorizontalCoordinate] < masts[nextRow - 1][columnOfHorizontalCoordinate]) {
+                    tempTable[0] = masts[nextRow - 1][columnOfHorizontalCoordinate];
+                    tempTable[1] = masts[nextRow - 1][columnOfHorizontalCoordinate + 1];
+                    masts[nextRow - 1][columnOfHorizontalCoordinate] = masts[nextRow][columnOfHorizontalCoordinate];
+                    masts[nextRow - 1][columnOfHorizontalCoordinate + 1] = masts[nextRow][columnOfHorizontalCoordinate + 1];
+                    masts[nextRow][columnOfHorizontalCoordinate] = tempTable[0];
+                    masts[nextRow][columnOfHorizontalCoordinate + 1] = tempTable[1];
+                }
             }
-            System.out.println("");
-        }*/
-        return tablicaDoSortowania;
+        }
+// can be rewritten using the copyOfMasts
+        int[][] copyOfMasts = new int[masts.length][masts[0].length];
+        for (int row = 0; row < masts.length; row++) {
+            copyOfMasts[row] = Arrays.copyOf(masts[row], masts[row].length);
+        }
+        return masts;
     }
 
 
-    static boolean sprawdzCzyMasztyPrzylegajaWwierszu(int[][] posortowanaTablicaWgKolumnyMasztu) {
-        /*System.out.println("Posortowane maszty wg kolumny - podstawione do metody:");
-        for (int[] rzad : posortowanaTablicaWgKolumnyMasztu) {
-            for (int pozycja : rzad) {
-                System.out.print(pozycja + " ");
-            }
-            System.out.println("");
-        }*/
+    private static boolean checkIfMastsAdjacentInRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
         boolean poprawnyWiersz = false;
         for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
             int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
@@ -237,7 +217,7 @@ public class ShipDrawing {
         return poprawnyWiersz;
     }
 
-    static int policzMasztyPrzylegajaceWwierszu(int[][] posortowanaTablicaWgKolumnyMasztu) {
+    static int countMastsAdjacentInRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
         int przylegajaceMaszty = 1;
         for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
             int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
@@ -253,7 +233,7 @@ public class ShipDrawing {
         return przylegajaceMaszty;
     }
 
-    static int ustalPrzylegajacyWiersz(int[][] posortowanaTablicaWgKolumnyMasztu) {
+    static int findAdjacentRow(int[][] posortowanaTablicaWgKolumnyMasztu) {
         int przylegajacyWiersz = -1;
         for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
             int wierszMasztu = posortowanaTablicaWgKolumnyMasztu[wierszPosortowanejTablicy][0];
@@ -269,7 +249,7 @@ public class ShipDrawing {
         return przylegajacyWiersz;
     }
 
-    static boolean sprawdzCzyMasztyPrzylegajaWkolumnie(int[][] posortowanaTablicaWgWierszuMasztu) {
+    static boolean checkIfMastsAdjacentInColumn(int[][] posortowanaTablicaWgWierszuMasztu) {
             /*System.out.println("Posortowane maszty wg wiersza - z metody:");
             for (int[] rzad : posortowanaTablicaWgWierszuMasztu) {
                 for (int pozycja : rzad) {
@@ -295,7 +275,7 @@ public class ShipDrawing {
         return poprawnaKolumna;
     }
 
-    static int policzMasztyPrzylegajaceWkolumnie(int[][] posortowanaTablicaWgWierszuMasztu) {
+    static int countMastsAdjacentInColumn(int[][] posortowanaTablicaWgWierszuMasztu) {
         int przylegajaceMaszty = 1;
         for (int wierszPosortowanejTablicy = 0; wierszPosortowanejTablicy < wielkoscStatku; wierszPosortowanejTablicy++) {
             int kolumnaMasztu = posortowanaTablicaWgWierszuMasztu[wierszPosortowanejTablicy][1];
@@ -311,7 +291,7 @@ public class ShipDrawing {
         return przylegajaceMaszty;
     }
 
-    static boolean sprawdzCzyWierszIkolumnaPrzylegajaDoSiebie(int[][] posortowanaTablicaWgWierszuMasztu, int przylegajacyWiersz) {
+    static boolean checkIfRowAndColumnAdjacentToEachOther(int[][] posortowanaTablicaWgWierszuMasztu, int przylegajacyWiersz) {
             /*System.out.println("Czy wiersz i kolumna przylegaja do siebie: posortowane maszty wg wiersza");
             for (int[] rzad : posortowanaTablicaWgWierszuMasztu) {
                 for (int pozycja : rzad) {
