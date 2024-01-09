@@ -19,7 +19,12 @@ Create a fleet of warships and conceal it from a computer-generated opponent. Ca
 
 ## :ship: Room for Improvement  
 
-:anchor: 
+:anchor: The programme can be rewritten as an object-oriented app  
+
+:anchor: Logic behind drawing ships can be simplified and methods shortened  
+
+:anchor: The main method can be split into parts and shortened  
+
 
 ## :ship: How To Use  
 
