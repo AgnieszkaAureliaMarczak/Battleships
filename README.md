@@ -32,8 +32,13 @@ Create a fleet of warships and conceal it from a computer-generated opponent. Ca
 
 :anchor: Pro-Tip: for best functionality use [the Corretto-17 Oracle OpenJDK version 17](https://www.oracle.com/pl/java/technologies/downloads/#java17)  
 
-:anchor: You'll find the two versions of the game in the src folder  
+:anchor: You'll find the main method in the Game class in the src folder  
 
+
+![main](https://github.com/AgnieszkaAureliaMarczak/Battleships/assets/139965402/de8c1fc0-9936-467d-94ca-7fca6c415e45)  
+
+
+# :ship: Have Fun :ship:
 
 
  
