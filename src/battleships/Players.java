@@ -104,7 +104,7 @@ public class Players {
         return currentPlayer == PLAYER2;
     }
 
-    public static void fillInHumansBoardForTesting() {
+    public static void fillInHumansBoardForTesting() { // testing only!
         playersOneBoard = new int[][]{
                 {Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},
                 {Game.EMPTY, Game.EMPTY, Game.SHIP, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY, Game.EMPTY},

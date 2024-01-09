@@ -5,16 +5,16 @@ import java.util.Scanner;
 public class Game {
     static char[] gridLetters = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'};
     static int shipSize;
-    public static final int EMPTY = 0;
-    public static final int SHIP = 1;
-    public static final int HIT = 2;
-    public static final int MISS = 3;
-    public static final int TRIAL_SHIP = 4;
-    public static final char EMPTY_SYMBOL = ' ';
-    public static final char SHIP_SYMBOL = '\u25A1';
-    public static final char HIT_SYMBOL = 'X';
-    public static final char MISS_SYMBOL = '*';
-    public static final char TRIAL_SHIP_SYMBOL = '\u2713';
+    static final int EMPTY = 0;
+    static final int SHIP = 1;
+    static final int HIT = 2;
+    static final int MISS = 3;
+    static final int TRIAL_SHIP = 4;
+    static final char EMPTY_SYMBOL = ' ';
+    static final char SHIP_SYMBOL = '\u25A1';
+    static final char HIT_SYMBOL = 'X';
+    static final char MISS_SYMBOL = '*';
+    static final char TRIAL_SHIP_SYMBOL = '\u2713';
 
     public static void main(String[] args) {
         prepareBothBoardsForGame();
@@ -165,7 +165,10 @@ public class Game {
                 Players.printIfCurrentPlayerIsHuman("Narysuj statek. Ilosc masztów: " + shipSize);
                 int[][] shipCoordinates = ShipDrawing.drawShip();
                 addShipToBoard(shipCoordinates);
-                printBoard();
+                if (Players.isHumansMove()) {
+                    System.out.println();
+                    printBoard();
+                }
             }
             shipSize--;
         } while (shipSize > 0);
